@@ -361,31 +361,6 @@ void EPD_4IN2_V2_Clear(void)
 }
 
 
-/******************************************************************************
-function :	Sends the image buffer in RAM to e-Paper and displays
-parameter:
-******************************************************************************/
-void EPD_4IN2_V2_Display_Double(UBYTE *Black_Image , UBYTE *Red_Image)
-{
-    UWORD Width, Height;
-    Width = (EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1);
-    Height = EPD_4IN2_V2_HEIGHT;
-
-    EPD_4IN2_V2_SendCommand(0x24);
-    for (UWORD j = 0; j < Height; j++) {
-        for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Black_Image[i + j * Width]);
-        }
-    }
-
-    EPD_4IN2_V2_SendCommand(0x26);
-    for (UWORD j = 0; j < Height; j++) {
-        for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Red_Image[i + j * Width]);
-        }
-    }
-    EPD_4IN2_V2_TurnOnDisplay();
-}
 
 /******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and displays
@@ -584,66 +559,6 @@ void EPD_4IN2_V2_PartialDisplay(UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD 
 	EPD_4IN2_V2_SendData((Ystart>>8) & 0x01);
 	
     EPD_4IN2_V2_SendCommand(0x24);
-    for (i = 0; i < IMAGE_COUNTER; i++) {
-		EPD_4IN2_V2_SendData(Image[i]);
-	}
-	
-	EPD_4IN2_V2_TurnOnDisplay_Partial();
-}
-void EPD_4IN2_V2_PartialDisplay_Color(UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend , UWORD Color )
-{
-    if((Xstart % 8 + Xend % 8 == 8 && Xstart % 8 > Xend % 8) || Xstart % 8 + Xend % 8 == 0 || (Xend - Xstart)%8 == 0)
-	{
-			Xstart = Xstart / 8 ;
-			Xend = Xend / 8;
-	}
-	else
-	{
-			Xstart = Xstart / 8 ;
-			Xend = Xend % 8 == 0 ? Xend / 8 : Xend / 8 + 1;
-	}
-
-
-	UWORD i, Width;
-	Width = Xend -  Xstart;
-	UWORD IMAGE_COUNTER = Width * (Yend-Ystart);
-
-	Xend -= 1;
-	Yend -= 1;	
-
-	EPD_4IN2_V2_SendCommand(0x3C); //BorderWavefrom,
-	EPD_4IN2_V2_SendData(0x80);	
-
-	EPD_4IN2_V2_SendCommand(0x21); 
-	EPD_4IN2_V2_SendData(0x00);
-	EPD_4IN2_V2_SendData(0x00);
-
-	EPD_4IN2_V2_SendCommand(0x3C); 
-	EPD_4IN2_V2_SendData(0x80); 
-
-	EPD_4IN2_V2_SendCommand(0x44);       // set RAM x address start/end, in page 35
-	EPD_4IN2_V2_SendData(Xstart & 0xff);    // RAM x address start at 00h;
-	EPD_4IN2_V2_SendData(Xend & 0xff);    // RAM x address end at 0fh(15+1)*8->128 
-	EPD_4IN2_V2_SendCommand(0x45);       // set RAM y address start/end, in page 35
-	EPD_4IN2_V2_SendData(Ystart & 0xff);    // RAM y address start at 0127h;
-	EPD_4IN2_V2_SendData((Ystart>>8) & 0x01);    // RAM y address start at 0127h;
-	EPD_4IN2_V2_SendData(Yend & 0xff);    // RAM y address end at 00h;
-	EPD_4IN2_V2_SendData((Yend>>8) & 0x01); 
-
-	EPD_4IN2_V2_SendCommand(0x4E);   // set RAM x address count to 0;
-	EPD_4IN2_V2_SendData(Xstart & 0xff); 
-	EPD_4IN2_V2_SendCommand(0x4F);   // set RAM y address count to 0X127;    
-	EPD_4IN2_V2_SendData(Ystart & 0xff);
-	EPD_4IN2_V2_SendData((Ystart>>8) & 0x01);
-	
-    if(Color == 0x26 )
-    {
-        EPD_4IN2_V2_SendCommand(0x26);
-    }
-    else
-    {
-        EPD_4IN2_V2_SendCommand(0x24);
-    }
     for (i = 0; i < IMAGE_COUNTER; i++) {
 		EPD_4IN2_V2_SendData(Image[i]);
 	}

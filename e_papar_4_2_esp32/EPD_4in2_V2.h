@@ -45,11 +45,9 @@ void EPD_4IN2_V2_Init_Fast(UBYTE Mode);
 void EPD_4IN2_V2_Init_4Gray(void);
 void EPD_4IN2_V2_Clear(void);
 void EPD_4IN2_V2_Display(UBYTE *Image);
-void EPD_4IN2_V2_Display_Double(UBYTE *Black_Image , UBYTE *Red_Image);
 void EPD_4IN2_V2_Display_Fast(UBYTE *Image);
 void EPD_4IN2_V2_Display_4Gray(UBYTE *Image);
 void EPD_4IN2_V2_PartialDisplay(UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend);
-void EPD_4IN2_V2_PartialDisplay_Color(UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend , UWORD Color );
 void EPD_4IN2_V2_Sleep(void);
 
 #endif

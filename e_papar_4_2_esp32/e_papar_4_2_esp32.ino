@@ -6,54 +6,23 @@
 #include <stdlib.h>
 
 /* Entry point ----------------------------------------------------------------*/
+static uint8_t IMG[EPD_4IN2_V2_WIDTH / 8 * EPD_4IN2_V2_HEIGHT] = {0};
+static uint16_t IMG_index = 0 ;
 void setup()
 {
     printf("EPD_4IN2_V2_test Demo\r\n");
     DEV_Module_Init();
 
     printf("e-Paper Init and Clear...\r\n");
-    EPD_4IN2_V2_Init();
-    EPD_4IN2_V2_Clear();
-    DEV_Delay_ms(500);
+    // EPD_4IN2_V2_Init();
+    // EPD_4IN2_V2_Clear();
+    // DEV_Delay_ms(500);
 
-    //Create a new image cache
-    UBYTE *BlackImage , *RedImage;
-    /* you have to edit the startup_stm32fxxx.s file and set a big enough heap size */
-    UWORD Imagesize = ((EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1)) * EPD_4IN2_V2_HEIGHT;
-    if((BlackImage = (UBYTE *)malloc(Imagesize)) == NULL) {
-        printf("Failed to apply for black memory...\r\n");
-        while (1);
-    }
-    if((RedImage = (UBYTE *)malloc(Imagesize)) == NULL) {
-        printf("Failed to apply for black memory...\r\n");
-        while (1);
-    }
-    printf("Paint_NewImage\r\n");
-    Paint_NewImage(BlackImage, EPD_4IN2_V2_WIDTH, EPD_4IN2_V2_HEIGHT, 0, WHITE);
+    // //Create a new image cache
+    // UBYTE *BlackImage = IMG;
+    // printf("Paint_NewImage\r\n");
+    // Paint_NewImage(BlackImage, EPD_4IN2_V2_WIDTH, EPD_4IN2_V2_HEIGHT, 0, WHITE);
 
-#if 1
-    // Paint_SelectImage(BlackImage);
-    // Paint_Clear(WHITE);
-    // Paint_DrawString_EN(10, 0, "ABCDEFG", &Font24, BLACK, WHITE);
-    // Paint_DrawString_EN(10, 20, "ABCDEFG", &Font24, WHITE, BLACK);
-
-    // Paint_SelectImage(RedImage);
-    // Paint_Clear(WHITE);
-    // Paint_DrawString_EN(10, 50, "HIGKLMN", &Font24, BLACK, WHITE);
-    // Paint_DrawString_EN(10, 70, "HIGKLMN", &Font24, WHITE, BLACK);
-
-    // EPD_4IN2_V2_Display_Double(BlackImage,RedImage);
-    Paint_NewImage(BlackImage, 120, 50, 0, WHITE);
-    Paint_Clear(WHITE);
-    Paint_DrawRectangle(1, 1, 120, 50, BLACK, DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
-    PAINT_TIME sPaint_time;
-    sPaint_time.Hour = 12;
-    sPaint_time.Min = 34;
-    sPaint_time.Sec = 56;
-    Paint_DrawTime(10, 15, &sPaint_time, &Font20, WHITE, BLACK);
-    EPD_4IN2_V2_PartialDisplay_Color(BlackImage, 200, 80, 320, 130,0x24);
-    EPD_4IN2_V2_PartialDisplay_Color(BlackImage, 80, 80, 200, 130,0x26);
-#endif
 
 #if 0  // show bmp
     printf("show window BMP-----------------\r\n");
@@ -202,15 +171,75 @@ void setup()
     EPD_4IN2_V2_Clear();
 #endif
 
-    printf("Goto Sleep...\r\n");
-    EPD_4IN2_V2_Sleep();
-    free(BlackImage);
-    BlackImage = NULL;
-
+    // printf("Goto Sleep...\r\n");
+    // EPD_4IN2_V2_Sleep();
 }
 
 /* The main loop -------------------------------------------------------------*/
+typedef enum uart_data_process {
+    IDLE,
+    TRANING,
+}uart_data_process_e;
+static uart_data_process_e img_data_process = IDLE ;
+static char temp_buffer[300];
+static char comchar;
 void loop()
 {
-  //
+    delay(2);
+    uint16_t uart_num = Serial.available();
+    if (uart_num > 0) {
+        switch (uart_num)
+        {
+        case 1 :
+            comchar = Serial.read();
+            if(comchar == 'S')
+            {
+                memset(IMG,0,sizeof(IMG));
+                IMG_index = 0 ;
+                Serial.print('S');
+                img_data_process = TRANING ;
+            }
+            else if(comchar == 'E')
+            {
+                if(IMG_index >= sizeof(IMG))
+                {
+                    IMG_index = 0 ;
+                    Serial.print('E');
+                    img_data_process = IDLE ;
+
+                    EPD_4IN2_V2_Init_Fast(Seconds_1S);
+                    printf("show image for array\r\n");
+                    Paint_SelectImage(IMG);
+                    Paint_Clear(WHITE);
+                    EPD_4IN2_V2_Display_Fast(IMG);
+                    DEV_Delay_ms(2000);
+                    EPD_4IN2_V2_Sleep();
+                    Serial.println("OK!");
+                }
+                else
+                {
+                    Serial.println(IMG_index);
+                }
+            }
+            break;
+        default:
+            if(TRANING == img_data_process)
+            {
+                Serial.readBytes(temp_buffer, uart_num);
+                if(IMG_index < sizeof(IMG))
+                {
+                    memcpy(&IMG[IMG_index],temp_buffer,uart_num);
+                    IMG_index += uart_num ;
+                    Serial.print('T');
+                    Serial.println(IMG_index);
+                }
+                else
+                {
+                    Serial.println("ERROR");
+                }
+
+            }
+            break;
+        }
+        }
 }
