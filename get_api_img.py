@@ -8,7 +8,9 @@ pic_url = "https://api.mwm.moe/ai/"
 
 def floyd_steinberg_dithering(image):
     # 将图像转换为灰度图
+
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
     
     # Floyd-Steinberg抖动方法
     for y in range(1, gray_image.shape[0] - 1):

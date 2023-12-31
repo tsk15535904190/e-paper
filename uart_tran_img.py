@@ -18,27 +18,50 @@ else:
     print("COMx ERROR!")
 
 #读取图片
-color_image = cv2.imread('test.jpg')
+# color_image = cv2.imread('test2.jpg')
+
     
-# pic_url1 = " "
-# pic_url2 = "https://api.likepoems.com/img/pc/"
-# color_image = fetch_display_dithered_image(api_url=pic_url2)
+pic_url1 = " "
+pic_url2 = "https://api.likepoems.com/img/pc/"
+color_image = fetch_display_dithered_image()
 
 #将图像缩放为屏幕大小
 color_image = cv2.resize(color_image, (400, 300),interpolation=cv2.INTER_AREA)  # 替换为你点阵屏幕的宽度和高度
+
 #将图像转换为散点图
-gay_image = floyd_steinberg_dithering(color_image)
+image_R = color_image.copy()
+image_GB = color_image.copy()
+
+image_R[:, :, 0] = 0  # 蓝色通道置零
+image_R[:, :, 1] = 0  # 绿色通道置零
+
+image_GB[:, :, 2] = 0  # 红色通道置零
+
+
+gay_image_R = floyd_steinberg_dithering(image_R)
+gay_image_GB = floyd_steinberg_dithering(image_GB)
+
+
 # 调整灰度图像的大小，以适应点阵屏幕
-# cv2.imshow('Dithered Image from API', gay_image)
+# cv2.imshow('gay_image_R', gay_image_R)
+# cv2.imshow('gay_image_GB', gay_image_GB)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
-# exit()
+
 # 将灰度图像二值化为0或1
-binary_image = (gay_image > 128).astype(np.uint8)
+binary_image_1 = (gay_image_GB > 128).astype(np.uint8)
+binary_image_2 = (gay_image_R > 128).astype(np.uint8)
+
 # 将每8个像素组合成一个字节
-byte_array = np.packbits(binary_image, axis=1)
-resized_array = np.resize(byte_array, 15000)
-IMG_list = resized_array.tolist()
+byte_array_1 = np.packbits(binary_image_1, axis=1)
+byte_array_2 = np.packbits(binary_image_2, axis=1)
+
+resized_array_1 = np.resize(byte_array_1, 15000)
+resized_array_2 = np.resize(byte_array_2, 15000)
+
+IMG_list = resized_array_1.tolist() + resized_array_2.tolist()
+
+print(len(IMG_list))
 
 IMG_index = 0 
 PACKET_LEN = 100
