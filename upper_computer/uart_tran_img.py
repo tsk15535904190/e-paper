@@ -30,14 +30,18 @@ image_red = np.zeros((E_PAPER_HIGH, E_PAPER_WIDTH), dtype=np.uint8)
 
 
 def img_process(img1,img2):
-    image_black = img_pil_draw(img1,"你好，世界",(50,150),40)
-    image_red = img_pil_draw(img2,"你好，华夏",(50,150),28)
+    word = get_word_of_day()
+    word_str = word['payload'] + '---' + word['from']
+    word_srt_len = len(word_str)
+    print(word_str)
+    image_black = img_pil_draw(img1,word_str,(400 - 18 * word_srt_len, 270),18)
+    image_red = img_pil_draw(img2,"你好，华夏",(150,150),48)
     return image_black,image_red
 
 
 
 def uart_send(send_list):
-    return 1
+
     IMG_index = 0 
     PACKET_LEN = 100
     print(ser.readall().decode())
@@ -69,8 +73,9 @@ def uart_send(send_list):
 print('start.')
 image_black,image_red = img_process(image_black,image_red)
 display_img(image_black,image_red)
-print(get_weather_info())
-print(get_word_of_day())
+# print(get_weather_info())
+# print(get_word_of_day())
+get_memo_info()
 send_list = Convert_gray_to_8bit(image_black,image_red)
 uart_send(send_list)
 print('over.')

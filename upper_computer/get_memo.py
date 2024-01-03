@@ -7,9 +7,7 @@ def get_memo_info():
     try:
         with open(path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
-            line_num = len(lines)
-            for line_number, line_content in enumerate(lines, start=1):
-                print(f'Line {line_number}: {line_content.strip()}')
+            return lines
     except FileNotFoundError:
         print(f"File '{path}' not found.")
         return 0 

@@ -18,8 +18,14 @@ def img_pil_draw(img,text,text_position,font_size):
 def Convert_gray_to_8bit(img1,img2):
     binary_image_black = (img1 > 100).astype(np.uint8)
     binary_image_red = (img2 > 100).astype(np.uint8)
-    resized_array_black = np.resize(binary_image_black, 15000)
-    resized_array_red = np.resize(binary_image_red, 15000)
+
+    binary_image_black = np.logical_not(binary_image_black)
+
+    byte_array_black = np.packbits(binary_image_black, axis=1)
+    byte_array_red = np.packbits(binary_image_red, axis=1)
+
+    resized_array_black = np.resize(byte_array_black, 15000)
+    resized_array_red = np.resize(byte_array_red, 15000)
     IMG_list = resized_array_black.tolist() + resized_array_red.tolist()
     return IMG_list
 
