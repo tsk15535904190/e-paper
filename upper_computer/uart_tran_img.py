@@ -33,6 +33,8 @@ image_red = np.zeros((E_PAPER_HIGH, E_PAPER_WIDTH), dtype=np.uint8)
 def img_process(img1,img2):
     image_black = img1
     image_red = img2
+
+    sidebar_thickness = 2
     ##绘制每日一言
     word = get_word_of_day()
     if word :
@@ -40,48 +42,59 @@ def img_process(img1,img2):
         print(word_str)
     else:
         word_str = "每日一言获取错误!"
-    word_srt_len = len(word_str)
-    image_black = img_pil_draw(image_black,word_str,(max(0,400 - 14 * word_srt_len), 280),14)
+    word_str_len = len(word_str)
+    word_str_font_size = 16
+    image_black = img_pil_draw(image_black,word_str,(max(0,400 - word_str_font_size * word_str_len), 300 - word_str_font_size - sidebar_thickness),word_str_font_size)
 
     ##绘制天气信息
     weather = get_weather_info()
-    image_red = img_pil_draw(image_red,weather['location'],(0,0),48)
+    print(weather)
+    image_red = img_pil_draw(image_red,weather['location'] + '♥',(0,0),44)
 
-    image_red = img_pil_draw(image_red,weather['today_daily_forecasts']['date'],(0,50),18)
-    image_black = img_pil_draw(image_black,weather['today_daily_forecasts']['text_day'],(0,68),18)
-    image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(0,86),18)
-    image_black = img_pil_draw(image_black,'降雨概率:'+weather['today_daily_forecasts']['rainfall'] ,(0,104),18)
+    image_red = img_pil_draw(image_red,weather['today_daily_forecasts']['date'],(10,50),22)
+
+    image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_day'],(10,68),18)
+    image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(10,86),18)
+    image_black = img_pil_draw(image_black,'降水:'+weather['today_daily_forecasts']['rainfall'] + '%' ,(10,104),18)
+    image_black = img_pil_draw(image_black,'风向:'+weather['today_daily_forecasts']['wind_direction'] ,(10,122),18)
+    image_black = img_pil_draw(image_black,'风速:'+weather['today_daily_forecasts']['wind_speed'] ,(10,140),18)
+    image_black = img_pil_draw(image_black,'湿度:'+weather['today_daily_forecasts']['humidity'] ,(10,158),18)
+
+    image_red = img_pil_draw(image_red,weather['tomorrow_daily_forecasts']['date'],(10,180),20)
+
+    image_black = img_pil_draw(image_black,'天气:' + weather['tomorrow_daily_forecasts']['text_day'],(10,198),18)
+    image_black = img_pil_draw(image_black,'温度:'+ weather['tomorrow_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(10,216),18)
+    image_black = img_pil_draw(image_black,'湿度:'+weather['tomorrow_daily_forecasts']['humidity'] ,(10,234),18)
+
     ##绘制备忘录
     tips = get_memo_info()
     if tips :
 
-        tip_top_left = (100, 0)
+        tip_top_left = (130, 0)
         tip_bottom_right = (400, 40)
 
         cv2.rectangle(image_red, tip_top_left, tip_bottom_right, 255, -1)
-        image_red = img_pil_draw(image_red,"Task",(100,0),40,text_color = 0)
-        tip_x = 100
+        image_red = img_pil_draw(image_red,"Task",(140,0),40,text_color = 0)
+        tip_x = 130
         tip_y = 50
         for tip in tips:
             if tip.startswith('*'):
-                image_red = img_pil_draw(image_red,tip[1:],(tip_x,tip_y),16) #星标事件为红色
+                image_red = img_pil_draw(image_red,tip[1:],(tip_x,tip_y),20) #星标事件为红色
             elif tip.startswith('-'):
-                image_black = img_pil_draw(image_black,tip[1:],(tip_x,tip_y),16) #完成事件为黑色
-                cv2.line(image_red, (tip_x,tip_y + 8), (tip_x + len(tip) * 16,tip_y + 8), 255, 1) #完成事件画线使用红色
+                image_black = img_pil_draw(image_black,tip[1:],(tip_x,tip_y),20) #完成事件为黑色
+                cv2.line(image_red, (tip_x,tip_y + 8), (tip_x + len(tip) * 20,tip_y + 8), 255, 1) #完成事件画线使用红色
             else :
-                image_black = img_pil_draw(image_black,tip,(tip_x,tip_y),16) #普通事件使用黑色
-            tip_y = tip_y + 16
+                image_black = img_pil_draw(image_black,tip,(tip_x,tip_y),20) #普通事件使用黑色
+            tip_y = tip_y + 20
     else :
         print("error")
 
     
     ##绘制边框
-    cv2.line(image_red, (0,0), (400,0), 255, 2)
-    cv2.line(image_red, (0,0), (0,300), 255, 2)
-    cv2.line(image_red, (400,0), (400,300), 255, 2)
-    cv2.line(image_red, (0,300), (400,300), 255, 2)
-
-
+    cv2.line(image_red, (0,0), (400,0), 255, sidebar_thickness)
+    cv2.line(image_red, (0,0), (0,300), 255, sidebar_thickness)
+    cv2.line(image_red, (400,0), (400,300), 255, sidebar_thickness)
+    cv2.line(image_red, (0,300), (400,300), 255, sidebar_thickness)
 
     return image_black,image_red
 
