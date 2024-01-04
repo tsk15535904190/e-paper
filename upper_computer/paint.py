@@ -29,7 +29,8 @@ def Convert_gray_to_8bit(img1,img2):
     return IMG_list
 
 def display_img(img1,img2):
-    cv2.imshow('image_black', img1)
-    cv2.imshow('image_red', img2)
+    white_image = np.ones_like(img1) * 0
+    merged_image = cv2.merge([white_image, img1, img2])
+    cv2.imshow('merged_image', merged_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
