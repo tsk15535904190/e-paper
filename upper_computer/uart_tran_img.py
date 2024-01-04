@@ -45,8 +45,12 @@ def img_process(img1,img2):
 
     ##绘制天气信息
     weather = get_weather_info()
+    image_red = img_pil_draw(image_red,weather['location'],(0,0),48)
 
-
+    image_red = img_pil_draw(image_red,weather['today_daily_forecasts']['date'],(0,50),18)
+    image_black = img_pil_draw(image_black,weather['today_daily_forecasts']['text_day'],(0,68),18)
+    image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(0,86),18)
+    image_black = img_pil_draw(image_black,'降雨概率:'+weather['today_daily_forecasts']['rainfall'] ,(0,104),18)
     ##绘制备忘录
     tips = get_memo_info()
     if tips :
