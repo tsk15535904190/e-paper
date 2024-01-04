@@ -4,14 +4,13 @@ from PIL import ImageFont, ImageDraw, Image
 
 np.set_printoptions(threshold=np.inf)
 
-def img_pil_draw(img,text,text_position,font_size):
+def img_pil_draw(img,text,text_position,font_size,text_color = 255):
     pil_image = Image.fromarray(img)
 
     font_path = "fonts/STXINWEI.TTF"
     font = ImageFont.truetype(font_path, font_size)
 
     draw = ImageDraw.Draw(pil_image)
-    text_color = 255
     draw.text(text_position, text, font=font, fill=text_color)
     return np.array(pil_image)
 
