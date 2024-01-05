@@ -14,3 +14,9 @@ def get_memo_info():
     except Exception as e:
         print(f"An error occurred: {e}")
         return 0 
+
+def get_memo_path():
+    config = configparser.ConfigParser()
+    config.read('./config.ini',encoding='utf-8')
+    path = config.get('memorandum', 'path')
+    return path
