@@ -121,6 +121,10 @@ def img_process(img1,img2):
     cv2.line(image_red, (400,0), (400,300), 255, sidebar_thickness)
     cv2.line(image_red, (0,300), (400,300), 255, sidebar_thickness)
 
+    cv2.line(image_red, (130,0), (130,300 - 20), 255, sidebar_thickness - 1)
+    cv2.line(image_red, (0,300 - 20), (400,300 - 20), 255, sidebar_thickness - 1)
+
+
     return image_black,image_red
 
 
