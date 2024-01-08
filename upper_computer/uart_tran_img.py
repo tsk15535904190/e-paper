@@ -27,7 +27,8 @@ if(COM[:3].upper() == "COM"):
     ser = serial.Serial(COM.upper(), 115200 , timeout=1)
     ser.setRTS(True)
 else:
-    print("COMx ERROR!")
+    print("COMx ERROR! exit")
+    exit()
 
 def img_process(img1,img2):
     current_time = datetime.now()
@@ -106,7 +107,7 @@ def img_process(img1,img2):
                 image_red = img_pil_draw(image_red,tip[1:],(tip_x,tip_y),20) #星标事件为红色
             elif tip.startswith('-'):
                 image_black = img_pil_draw(image_black,tip[1:],(tip_x,tip_y),20) #完成事件为黑色
-                cv2.line(image_red, (tip_x,tip_y + 8), (tip_x + len(tip) * 20,tip_y + 8), 255, 1) #完成事件画线使用红色
+                cv2.line(image_red, (tip_x,tip_y + 10), (tip_x + len(tip) * 20,tip_y + 10), 255, 2) #完成事件画线使用红色
             else :
                 image_black = img_pil_draw(image_black,tip,(tip_x,tip_y),20) #普通事件使用黑色
             tip_y = tip_y + 20
@@ -125,7 +126,6 @@ def img_process(img1,img2):
 
 
 def uart_send(send_list):
-    return 1
     IMG_index = 0 
     PACKET_LEN = 100
     print(ser.readall().decode())
