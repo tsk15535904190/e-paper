@@ -56,6 +56,7 @@ def img_process(img1,img2):
 
     ##绘制天气信息
     weather = get_weather_info()
+    # print(weather)
     image_red = img_pil_draw(image_red,weather['location'],(0,0),44)
 
     if night :
@@ -76,9 +77,9 @@ def img_process(img1,img2):
     image_red = img_pil_draw(image_red,weather['today_daily_forecasts']['date'],(10,50),22)
 
     if night :
-        image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_day'],(10,68),18)
-    else :
         image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_night'],(10,68),18)
+    else :
+        image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_day'],(10,68),18)
     image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(10,86),18)
     image_black = img_pil_draw(image_black,'降水:'+weather['today_daily_forecasts']['rainfall'] + '%' ,(10,104),18)
     image_black = img_pil_draw(image_black,'风向:'+weather['today_daily_forecasts']['wind_direction'] ,(10,122),18)
