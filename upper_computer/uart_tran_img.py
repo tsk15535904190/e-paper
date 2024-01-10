@@ -80,17 +80,17 @@ def img_process(img1,img2):
         image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_night'],(10,68),18)
     else :
         image_black = img_pil_draw(image_black,'天气:' + weather['today_daily_forecasts']['text_day'],(10,68),18)
-    image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(10,86),18)
+    image_black = img_pil_draw(image_black,'温度:'+ weather['today_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] + '℃',(10,86),18)
     image_black = img_pil_draw(image_black,'降水:'+weather['today_daily_forecasts']['rainfall'] + '%' ,(10,104),18)
     image_black = img_pil_draw(image_black,'风向:'+weather['today_daily_forecasts']['wind_direction'] ,(10,122),18)
-    image_black = img_pil_draw(image_black,'风速:'+weather['today_daily_forecasts']['wind_speed'] ,(10,140),18)
-    image_black = img_pil_draw(image_black,'湿度:'+weather['today_daily_forecasts']['humidity'] ,(10,158),18)
+    image_black = img_pil_draw(image_black,'风速:'+weather['today_daily_forecasts']['wind_speed'] + 'm/s',(10,140),18)
+    image_black = img_pil_draw(image_black,'湿度:'+weather['today_daily_forecasts']['humidity']  + '%',(10,158),18)
 
     image_red = img_pil_draw(image_red,weather['tomorrow_daily_forecasts']['date'],(10,180),20)
 
     image_black = img_pil_draw(image_black,'天气:' + weather['tomorrow_daily_forecasts']['text_day'],(10,198),18)
-    image_black = img_pil_draw(image_black,'温度:'+ weather['tomorrow_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] ,(10,216),18)
-    image_black = img_pil_draw(image_black,'湿度:'+weather['tomorrow_daily_forecasts']['humidity'] ,(10,234),18)
+    image_black = img_pil_draw(image_black,'温度:'+ weather['tomorrow_daily_forecasts']['low'] + '~' + weather['today_daily_forecasts']['high'] + '℃',(10,216),18)
+    image_black = img_pil_draw(image_black,'湿度:'+weather['tomorrow_daily_forecasts']['humidity'] + '%',(10,234),18)
 
     ##绘制备忘录
     tips = get_memo_info()
