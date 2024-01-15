@@ -100,7 +100,7 @@ def img_process(img1,img2):
         tip_bottom_right = (400, 40)
 
         cv2.rectangle(image_red, tip_top_left, tip_bottom_right, 255, -1)
-        image_red = img_pil_draw(image_red,"Task",(140,0),40,text_color = 0)
+        image_red = img_pil_draw(image_red,"Task List",(140,0),40,text_color = 0)
         tip_x = 130
         tip_y = 50
         for tip in tips:
